@@ -8,6 +8,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 public class RestAssuredExercises6Test {
 
@@ -55,7 +57,12 @@ public class RestAssuredExercises6Test {
         given().
                 spec(requestSpec).
                 when();
-
+        Car car =
+                given().spec(requestSpec).
+                        when().
+                        get("/car/getcar/alfaromeogiulia").
+                        as(Car.class);
+        assertThat(car.getYear(),is(2016));
         // Put your assert here
     }
 }
