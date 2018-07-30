@@ -4,8 +4,14 @@ import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.Stream;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.core.IsEqual.equalTo;
 
 
 public class RestAssuredExercises2Test {
@@ -21,6 +27,11 @@ public class RestAssuredExercises2Test {
 			setBasePath("/api/f1").
 			build();
 	}
+	static Stream<Arguments> driverDataProvider() {
+		return Stream.of(
+				Arguments.of("monza", "Italy")
+		);
+	}
 	
 	/*******************************************************
 	 * Use junit-jupiter-params for @ParameterizedTest that
@@ -30,6 +41,18 @@ public class RestAssuredExercises2Test {
 	 ******************************************************/
 
 	//todo
+	@ParameterizedTest
+	@MethodSource("driverDataProvider")
+	public void checkCountryForCircuitId(String driverName,String permanentNumber){
+		given().spec(requestSpec).
+				pathParam("driver",driverName).
+				when().
+				get("/circuits/{driver}.json").
+				then().
+				assertThat().
+				body("MRData.CircuitTable.Circuits[0].Location.country",equalTo(permanentNumber));
+
+	}
 
 	/*******************************************************
 	 * Use junit-jupiter-params for @ParameterizedTest that specifies for all races
