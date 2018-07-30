@@ -4,6 +4,8 @@ import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.hamcrest.core.IsEqual.equalTo;
 
 import static io.restassured.RestAssured.given;
@@ -68,8 +70,8 @@ public class RestAssuredExercises5Test {
 		
 		given().
 			spec(requestSpec).
-		when().
-		then();
+		when().get("/xml/speedrecords").
+		then().body("speedRecords.car.findAll{it.@country == 'UK'}.size()",equalTo(3));
 	}
 	
 	/*******************************************************
