@@ -9,6 +9,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
 public class RestAssuredExercises3Test {
@@ -49,7 +51,7 @@ public class RestAssuredExercises3Test {
                 new ResponseSpecBuilder().
                         expectStatusCode(200).
                         expectContentType(ContentType.JSON).
-                        expectBody("MRData.CircuitTable.Circuits.circuitName[0]",equalTo("Albert Park Grand Prix Circuit")).
+                        expectBody("MRData.CircuitTable.Circuits.circuitName[0]", equalTo("Albert Park Grand Prix Circuit")).
                         build();
     }
 
@@ -64,8 +66,15 @@ public class RestAssuredExercises3Test {
 
 
     static void getNinthDriverId() {
-//        ninthDriverId =
-
+        ninthDriverId =
+                given().
+                        spec(requestSpec).
+                        when().
+                        get("/2016/drivers.json").
+                        then().
+                        extract().
+                        path("MRData.DriverTable.Drivers[8].driverId");
+        assertThat(ninthDriverId,is("vettel"));
     }
 
     /*******************************************************
@@ -83,7 +92,7 @@ public class RestAssuredExercises3Test {
                 spec(requestSpec).
                 when().get("/2014/1/circuits.json").
                 then().spec(responseSpec).
-                and().body("MRData.CircuitTable.Circuits[0].Location.locality",equalTo("Melbourne"));
+                and().body("MRData.CircuitTable.Circuits[0].Location.locality", equalTo("Melbourne"));
     }
 
     /*******************************************************
@@ -96,9 +105,8 @@ public class RestAssuredExercises3Test {
     @Test
     public void useExtractedDriverId() {
 
-        given().
-                spec(requestSpec).
-                when().
-                then();
+        given().spec(requestSpec).
+                when().get("/drivers/{ninthDriverId}.json",ninthDriverId).
+                then().body("MRData.DriverTable.Drivers[0].nationality",is("German"));
     }
 }
