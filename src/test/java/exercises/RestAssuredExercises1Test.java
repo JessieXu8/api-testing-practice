@@ -7,8 +7,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.IsEqual.equalTo;
 
 
@@ -119,8 +118,10 @@ public class RestAssuredExercises1Test {
 
         given().
                 spec(requestSpec).
-                when().
+                when().get("/2014/circuits.json").
 
-                then();
+                then().assertThat()
+                .body("MRData.CircuitTable.season",equalTo("2014"))
+                .body("MRData.CircuitTable.Circuits.circuitId",not(hasItem("nurburgring")));
     }
 }
