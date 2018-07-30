@@ -32,6 +32,14 @@ public class RestAssuredExercises2Test {
 				Arguments.of("monza", "Italy")
 		);
 	}
+	static Stream<Arguments> driverDataProvider1() {
+		return Stream.of(
+				Arguments.of("1", 1),
+				Arguments.of("2", 3),
+				Arguments.of("3", 2),
+				Arguments.of("4", 2)
+		);
+	}
 	
 	/*******************************************************
 	 * Use junit-jupiter-params for @ParameterizedTest that
@@ -85,12 +93,15 @@ public class RestAssuredExercises2Test {
 	 * and verify the number of pit stops made
 	 ******************************************************/
 	
-	@Test
-	public void checkNumberOfPitstopsForMaxVerstappenIn2015() {
+	@ParameterizedTest
+	@MethodSource("driverDataProvider1")
+	public void checkNumberOfPitstopsForMaxVerstappenIn2015(String driverName,Integer pitstopsNumber ) {
 		
 		given().
-			spec(requestSpec).
+			spec(requestSpec).pathParam("driver",driverName).
 		when().
-		then();
+				get("2015/{driver}/drivers/max_verstappen/pitstops.json").
+		then().
+		assertThat().body("MRData.RaceTable.Races[0].PitStops.size()",equalTo(pitstopsNumber));
 	}
 }
