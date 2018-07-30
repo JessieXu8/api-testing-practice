@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.core.IsEqual.equalTo;
 
 public class RestAssuredExercises4Test {
 
@@ -41,7 +42,17 @@ public class RestAssuredExercises4Test {
     private static String accessToken;
 
     public static void retrieveOAuthToken() {
-
+        accessToken =
+                given().
+                        spec(requestSpec).
+                        auth().
+                        preemptive().
+                        basic("oauth", "gimmeatoken").
+                        when().
+                        get("/oauth2/token").
+                        then().
+                        extract().
+                        path("access_token");
     }
 
     /*******************************************************
@@ -58,8 +69,10 @@ public class RestAssuredExercises4Test {
 
         given().
                 spec(requestSpec).
-                when().
-                then();
+                auth().
+                oauth2(accessToken).
+                when().get("/payments").
+                then().body("paymentsCount",equalTo(4));
     }
 
     /*******************************************************
